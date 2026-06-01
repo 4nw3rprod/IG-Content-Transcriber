@@ -1,0 +1,6 @@
+openai-whisper>=20240930
+yt-dlp>=2025.10.14
+fastapi>=0.115.0
+uvicorn>=0.30.0
+mcp>=1.27.0
+python-multipart>=0.0.20
