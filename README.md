@@ -1,26 +1,26 @@
 <div align="center">
 
-# 🎬 ReelRecon
-
-### Reel reconnaissance for AI agents.
+<img src="https://raw.githubusercontent.com/4nw3rprod/IG-Content-Transcriber/main/assets/hero.png" alt="ReelRecon — Reel reconnaissance for AI agents. Works with Claude, ChatGPT, Gemini, Hermes, OpenClaw, and any MCP-capable agent." width="820"/>
 
 **Transcribe and decode any public Instagram profile — hooks, CTAs, and script patterns — locally and for free.**
 
-**Give Claude, ChatGPT, Gemini, Hermes, OpenClaw — or any MCP-capable agent — the power to watch Instagram for you.**
-
-[![Python](https://img.shields.io/badge/python-3.11+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![npm](https://img.shields.io/npm/v/reelrecon?logo=npm&color=CB3837)](https://www.npmjs.com/package/reelrecon)
+[![Python](https://img.shields.io/badge/python-3.10+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![Whisper](https://img.shields.io/badge/transcription-OpenAI%20Whisper-74aa9c?logo=openai&logoColor=white)](https://github.com/openai/whisper)
 [![MCP](https://img.shields.io/badge/protocol-MCP%20native-8A2BE2)](https://modelcontextprotocol.io/)
-[![Agents](https://img.shields.io/badge/works%20with-Claude%20·%20ChatGPT%20·%20Gemini%20·%20Hermes%20·%20OpenClaw-blueviolet)](#-drop-it-into-your-agent-stack)
-[![Price](https://img.shields.io/badge/price-free-success)](#)
+[![License](https://img.shields.io/badge/license-MIT-success)](LICENSE)
 [![Privacy](https://img.shields.io/badge/runs-locally-orange)](#)
+
+```bash
+npx -y reelrecon
+```
 
 *Your agent can already write scripts. Now it can study the competition first:*
 *"Transcribe @competitor's latest 10 Reels and break down their hook formulas" — one tool call away.*
 
 [🤖 Agent Setup](#-drop-it-into-your-agent-stack) · [🚀 Quick Start](#-quick-start) · [🔍 Use Cases](#-what-your-agent-can-do-with-it) · [🧰 Tool Reference](#-mcp-tool-reference) · [🖥️ Web UI](#️-the-dashboard-for-humans)
 
-<img src="screen.png" alt="ReelRecon dashboard" width="850"/>
+<img src="https://raw.githubusercontent.com/4nw3rprod/IG-Content-Transcriber/main/screen.png" alt="ReelRecon dashboard" width="850"/>
 
 </div>
 

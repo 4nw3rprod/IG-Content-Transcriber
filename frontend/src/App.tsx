@@ -3,7 +3,6 @@ import {
   Activity,
   Brain,
   CheckCircle2,
-  Clapperboard,
   Clock3,
   Gauge,
   ExternalLink,
@@ -342,8 +341,8 @@ function App() {
     <div className="relative h-screen overflow-hidden bg-background text-foreground">
       <header className="fixed top-0 right-0 left-0 z-40 flex h-14 items-center justify-between border-b border-[#2D2D30] bg-[#0B0B0C] px-4 lg:left-[260px] lg:px-6">
         <div className="flex items-center gap-3">
-          <div className="grid size-7 place-items-center rounded border border-primary/40 bg-primary/10 text-primary">
-            <Clapperboard className="size-4" />
+          <div className="grid size-7 place-items-center overflow-hidden rounded border border-primary/40 bg-white">
+            <img src="/icon.jpg" alt="ReelRecon" className="size-7 object-cover" />
           </div>
           <div>
             <p className="text-sm font-bold tracking-tight text-white">ReelRecon</p>
