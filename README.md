@@ -28,11 +28,13 @@ npx -y reelrecon
 
 ## 🎯 Why this exists
 
-LLMs can't watch video. Agentic frameworks can browse, code, and write — but a Reel is a black box to them. **ReelRecon** closes that gap with a local, free, MCP-native pipeline:
+Today, analyzing a competitor's Reels means either paying a per-minute transcription SaaS, or uploading videos one by one to a multimodal model and burning tokens while it watches. **ReelRecon is the third option: free, open source, and local** — an MCP-native pipeline built for the part that actually matters for content strategy, the spoken word:
 
 1. Your agent calls one tool with a **public Instagram profile URL**.
-2. The server grabs the **latest 10 videos**, extracts audio, and transcribes every word with **OpenAI Whisper** — locally, no per-minute API fees.
+2. The server grabs the **latest 10 videos**, extracts audio, and transcribes every word with **OpenAI Whisper** — locally. No subscriptions, no per-minute fees, no tokens spent on video frames.
 3. The agent gets back **structured JSON**: full transcripts plus mined hooks, CTAs, sentiment, keyword clusters, title ideas, and a cross-video strategy overview.
+
+ReelRecon doesn't analyze visuals — scripts, hooks, and CTAs live in the audio, and that's what it mines for patterns and content ideas. It pairs perfectly with video-capable models: triage all ten Reels here for free in minutes, then send only the one or two that matter to a multimodal model for full visual breakdown.
 
 Built agent-tough: structured errors instead of exceptions, progress notifications, job queueing with hard timeouts, context-window-friendly response trimming, and a `check_health` tool so your agent can self-diagnose a broken install instead of hallucinating around it.
 
