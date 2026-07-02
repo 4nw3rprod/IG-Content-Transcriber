@@ -1,6 +1,6 @@
 {
   "name": "reelrecon",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Reel reconnaissance for AI agents — transcribe and decode public Instagram profiles via MCP. Whisper-powered, free, runs locally.",
   "bin": {
     "reelrecon": "bin/reelrecon.js"

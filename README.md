@@ -60,6 +60,26 @@ npx -y reelrecon transcribe "https://www.instagram.com/<username>/" --json
 >
 > Package not on npm yet in your region/registry? Run it straight from GitHub — same launcher: `npx -y github:4nw3rprod/ReelRecon`
 
+### 🔄 Upgrading
+
+- **npx users:** pin `reelrecon@latest` in your config (as in the snippets below) and every server start runs the newest published version. If plain `npx -y reelrecon` keeps serving you a stale cached copy, run `npx -y reelrecon@latest` once or clear the cache with `npm cache clean --force`.
+- **GitHub-direct:** `npx -y github:4nw3rprod/ReelRecon` always runs the latest `main` — no npm release needed.
+- **Local clone:** `git pull`. That's it — the private Python env in `~/.reelrecon` is reused automatically and only reinstalls when `requirements.txt` changes.
+
+If Instagram login-walled you on a public reel, upgrade to **v1.2.1+** and (optionally) hand the server your own session in the MCP config:
+
+```json
+{
+  "mcpServers": {
+    "reelrecon": {
+      "command": "npx",
+      "args": ["-y", "reelrecon@latest"],
+      "env": { "REELRECON_COOKIES_FILE": "/absolute/path/to/cookies.txt" }
+    }
+  }
+}
+```
+
 | Agent / Framework | Integration |
 |---|---|
 | **Claude Code** (CLI) | `claude mcp add reelrecon -- npx -y reelrecon` |
