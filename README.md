@@ -2,20 +2,21 @@
 
 # 📸 IG Content Transcriber
 
-### Turn any public Instagram profile into a searchable content-strategy playbook.
+### The Instagram transcription engine built for AI agents.
 
-**Free · Open source · Runs 100% on your machine**
+**Give Claude, ChatGPT, Gemini, Hermes, OpenClaw — or any MCP-capable agent — the power to watch Instagram for you.**
 
 [![Python](https://img.shields.io/badge/python-3.11+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![Whisper](https://img.shields.io/badge/transcription-OpenAI%20Whisper-74aa9c?logo=openai&logoColor=white)](https://github.com/openai/whisper)
-[![MCP](https://img.shields.io/badge/AI%20agents-MCP%20ready-8A2BE2)](https://modelcontextprotocol.io/)
+[![MCP](https://img.shields.io/badge/protocol-MCP%20native-8A2BE2)](https://modelcontextprotocol.io/)
+[![Agents](https://img.shields.io/badge/works%20with-Claude%20·%20ChatGPT%20·%20Gemini%20·%20Hermes%20·%20OpenClaw-blueviolet)](#-drop-it-into-your-agent-stack)
 [![Price](https://img.shields.io/badge/price-free-success)](#)
 [![Privacy](https://img.shields.io/badge/runs-locally-orange)](#)
 
-*Your competitors publish their content strategy every single day — in their Reels.*
-*This tool transcribes it, mines it, and hands you their hooks, CTAs, and script patterns on a plate.*
+*Your agent can already write scripts. Now it can study the competition first:*
+*"Transcribe @competitor's latest 10 Reels and break down their hook formulas" — one tool call away.*
 
-[🚀 Quick Start](#-quick-start) · [🔍 Use Cases](#-built-for-competitive-content-research) · [🖥️ Web UI](#️-the-dashboard) · [🤖 AI Agents](#-plug-it-into-claude-or-any-ai-agent-mcp) · [🎛️ Tuning](#️-tuning)
+[🤖 Agent Setup](#-drop-it-into-your-agent-stack) · [🚀 Quick Start](#-quick-start) · [🔍 Use Cases](#-what-your-agent-can-do-with-it) · [🧰 Tool Reference](#-mcp-tool-reference) · [🖥️ Web UI](#️-the-dashboard-for-humans)
 
 <img src="screen.png" alt="IG Content Transcriber dashboard" width="850"/>
 
@@ -25,51 +26,124 @@
 
 ## 🎯 Why this exists
 
-Watching competitor Reels one by one and taking notes is slow, subjective, and impossible to scale. **IG Content Transcriber** automates the research grind:
+LLMs can't watch video. Agentic frameworks can browse, code, and write — but a Reel is a black box to them. **IG Content Transcriber** closes that gap with a local, free, MCP-native pipeline:
 
-1. Point it at any **public Instagram profile**.
-2. It grabs the **latest 10 videos**, extracts the audio, and transcribes every word with **OpenAI Whisper** — locally, for free.
-3. It then generates **AI insights per video and across the whole batch**: hooks, CTAs, sentiment, recurring keywords, title ideas, and repurposing angles.
+1. Your agent calls one tool with a **public Instagram profile URL**.
+2. The server grabs the **latest 10 videos**, extracts audio, and transcribes every word with **OpenAI Whisper** — locally, no per-minute API fees.
+3. The agent gets back **structured JSON**: full transcripts plus mined hooks, CTAs, sentiment, keyword clusters, title ideas, and a cross-video strategy overview.
 
-You end up with clean transcripts + structured JSON you can search, diff, feed to an LLM, or drop into a spreadsheet. No subscriptions, no per-minute transcription fees, no data leaving your machine (Whisper runs locally; AI insights optionally use your own free GroqCloud key and fall back to built-in heuristics without one).
+Built agent-tough: structured errors instead of exceptions, progress notifications, job queueing with hard timeouts, context-window-friendly response trimming, and a `check_health` tool so your agent can self-diagnose a broken install instead of hallucinating around it.
 
-## ✨ What you get
+## 🤖 Drop it into your agent stack
 
-| | Feature | Details |
-|---|---|---|
-| 🎬 | **Profile batch mode** | Latest 10 videos from any public IG profile in one command |
-| 🔗 | **Single video mode** | Any Reel/post URL — or any video URL yt-dlp supports |
-| 🎙️ | **Local audio mode** | Drop in an `mp3`/`wav`/`m4a`/… and skip Instagram entirely |
-| 📝 | **Word-for-word transcripts** | Whisper `tiny` → `large-v3`, auto language detection |
-| 🧠 | **Per-video AI insights** | Hook, summary, CTA, sentiment, keywords, title suggestions, content angles |
-| 📊 | **Batch AI overview** | Recurring themes, top hooks, and CTA patterns across all 10 videos |
-| 🖥️ | **Web dashboard** | Live progress, history, transcript viewer — built with React + shadcn/ui |
-| 🤖 | **MCP server** | Claude, Cursor, or any MCP agent can drive the whole pipeline |
-| 💾 | **Everything saved** | Audio, transcripts, metadata, and manifests organized per creator |
+The server speaks **stdio and streamable-HTTP MCP**, so anything MCP-capable can use it. No MCP? There's a JSON-mode CLI any framework can shell out to.
 
-## 🔍 Built for competitive content research
+| Agent / Framework | Integration |
+|---|---|
+| **Claude Code** (CLI) | `claude mcp add` — one command, see below |
+| **Claude Desktop** | `mcpServers` entry in config |
+| **ChatGPT / Codex CLI** | `mcp_servers` entry in `~/.codex/config.toml` |
+| **Gemini CLI** | `mcpServers` entry in `~/.gemini/settings.json` |
+| **Cursor / Windsurf / Cline** | Standard MCP server config (stdio) |
+| **OpenClaw, Hermes & other open agent frameworks** | Point the framework's MCP client at `run_mcp_server.sh` (stdio) or the HTTP endpoint |
+| **LangChain / CrewAI / custom loops** | Use an MCP adapter, or shell out to the CLI with `--json` |
 
-Once transcripts + insights land on disk, the analysis writes itself:
+<details>
+<summary><b>Claude Code</b></summary>
 
-- **🪝 Hook mining** — the first line of all 10 recent videos, side by side. See exactly how a competitor opens.
-- **📣 CTA patterns** — every "follow / comment / link in bio / DM me" detected and counted across the batch.
-- **🧬 Script structure** — full transcripts reveal pacing: hook → context → payoff → CTA. Steal the skeleton, not the words.
-- **🔑 Topic clusters** — recurring keywords across a creator's last 10 videos = their actual content pillars.
-- **📈 Trend triangulation** — run 3–5 competitors through the tool and diff what they're all suddenly talking about.
-- **♻️ Repurposing angles** — each video's insights include ready-to-use content angles and title ideas for your own spin.
+```bash
+claude mcp add ig-transcriber -- /absolute/path/to/IG-Content-Transcriber/run_mcp_server.sh
+```
+</details>
 
-> **Fair use, please:** this tool works with **public profiles only**, and it's built for research and inspiration — study patterns, don't plagiarize scripts. Instagram may rate-limit anonymous requests; be a good citizen.
+<details>
+<summary><b>Claude Desktop / Cursor / most MCP clients</b></summary>
+
+```json
+{
+  "mcpServers": {
+    "ig-transcriber": {
+      "command": "/absolute/path/to/IG-Content-Transcriber/run_mcp_server.sh"
+    }
+  }
+}
+```
+</details>
+
+<details>
+<summary><b>ChatGPT — Codex CLI</b> (<code>~/.codex/config.toml</code>)</summary>
+
+```toml
+[mcp_servers.ig-transcriber]
+command = "/absolute/path/to/IG-Content-Transcriber/run_mcp_server.sh"
+```
+</details>
+
+<details>
+<summary><b>Gemini CLI</b> (<code>~/.gemini/settings.json</code>)</summary>
+
+```json
+{
+  "mcpServers": {
+    "ig-transcriber": {
+      "command": "/absolute/path/to/IG-Content-Transcriber/run_mcp_server.sh"
+    }
+  }
+}
+```
+</details>
+
+<details>
+<summary><b>HTTP transport</b> (for frameworks that prefer a URL — OpenClaw, Hermes, remote setups)</summary>
+
+```bash
+./run_mcp_server.sh --transport streamable-http --host 127.0.0.1 --port 8001
+```
+
+Then point the client at `http://127.0.0.1:8001/mcp`.
+</details>
+
+<details>
+<summary><b>No MCP? Shell out to the JSON CLI</b> (LangChain, CrewAI, cron jobs, anything)</summary>
+
+```bash
+./run_latest_reel_transcription.sh "https://www.instagram.com/<username>/" --json
+```
+
+stdout is a single JSON object on success; non-zero exit + `{"status":"error","error":"..."}` on failure. Trivially parseable from any language.
+</details>
+
+**Then just prompt your agent:**
+
+> *"Use ig-transcriber to transcribe the latest Reels from @competitor. Compare their hooks against my last 5 scripts and tell me what patterns I'm missing."*
+
+## 🔍 What your agent can do with it
+
+Point any LLM at the structured output and competitive content research becomes a conversation:
+
+- **🪝 Hook mining** — the opening line of a competitor's last 10 videos, side by side. Your agent extracts the formula.
+- **📣 CTA patterns** — every "follow / comment / link in bio / DM me" detected and counted per batch.
+- **🧬 Script structure** — full transcripts expose pacing: hook → context → payoff → CTA. Steal the skeleton, not the words.
+- **🔑 Topic clusters** — recurring keywords across recent videos = a creator's actual content pillars.
+- **📈 Trend triangulation** — run 3–5 competitors and let the LLM diff what they're all suddenly talking about.
+- **♻️ Repurposing engine** — each video ships with ready-made content angles and title suggestions for your own spin.
+- **🕵️ Scheduled watching** — pair with your agent's cron/loop feature: "check these 3 profiles every morning and brief me."
+
+> **Fair use, please:** public profiles only (private accounts are detected and refused), and it's built for research and inspiration — study patterns, don't plagiarize scripts. Instagram may rate-limit anonymous requests; be a good citizen.
 
 ## ⚙️ How it works
 
 ```mermaid
 flowchart LR
-    A["📱 Public IG profile"] -->|latest 10 videos| C
-    B["🔗 Single video URL"] --> C["⬇️ yt-dlp<br/>audio extraction"]
-    D["🎙️ Local audio file"] --> E
-    C --> E["📝 Whisper<br/>local transcription"]
-    E --> F["🧠 AI insights<br/>hooks · CTAs · keywords"]
-    F --> G["📦 JSON manifest<br/>+ transcripts on disk"]
+    A["🤖 Agent / LLM<br/>MCP tool call"] --> B["📱 Public IG profile<br/>latest 10 videos"]
+    A --> C["🔗 Single video URL"]
+    A --> D["🎙️ Local audio file"]
+    B --> E["⬇️ yt-dlp<br/>audio extraction"]
+    C --> E
+    D --> F
+    E --> F["📝 Whisper<br/>local transcription"]
+    F --> G["🧠 AI insights<br/>hooks · CTAs · keywords"]
+    G --> H["📦 Structured JSON<br/>back to the agent"]
 ```
 
 ## 🚀 Quick Start
@@ -83,29 +157,44 @@ python3.11 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 ```
 
-Optional (for Groq-powered AI insights instead of the built-in heuristics):
+Optional (Groq-powered insights instead of the built-in heuristics):
 
 ```bash
 cp .env.example .env.local   # then set GROQ_API_KEY
 ```
 
-**Transcribe a competitor's latest 10 videos:**
+Connect your agent ([see configs above](#-drop-it-into-your-agent-stack)), or run it by hand:
 
 ```bash
+# A competitor's latest 10 videos
 ./run_latest_reel_transcription.sh "https://www.instagram.com/nike/" --json
-```
 
-**Transcribe a single Reel:**
-
-```bash
+# A single Reel, with model + language hints
 ./run_latest_reel_transcription.sh "https://www.instagram.com/reel/<id>/" --json --model small --language en
 ```
 
-That's it. Transcripts, metadata, and the batch manifest land in `outputs/`.
+## 🧰 MCP tool reference
+
+| Tool | What it does |
+|---|---|
+| `transcribe_input` | Profile URL → latest 10 videos, or any single video URL yt-dlp supports |
+| `transcribe_local_audio` | Transcribe a local audio file + generate insights |
+| `list_recent_batches` | Browse saved runs |
+| `read_batch_manifest` | Load a full batch result |
+| `read_video_output` | Load one video's transcript + metadata |
+| `check_health` | Self-diagnose ffmpeg/Whisper/yt-dlp, disk, and job status |
+
+Resources: `ig-transcriber://server` · `ig-transcriber://recent-batches` · `ig-transcriber://manifest/{group}/{label}` · `ig-transcriber://transcript/{group}/{label}/{video_id}`
+
+**The contract your agent can rely on:**
+
+- Tools **never raise** for expected failures — every call returns `status: "ok"` or a structured error: `error_type` (`invalid_input`, `not_found`, `pipeline_error`, `dependency_error`, `server_busy`, `timeout`, …), a message, and a `hint` the agent can act on.
+- **Progress streams** as MCP notifications during long batches.
+- **Context-window friendly:** `include_transcript_text=false` or `max_transcript_chars=N` trims responses; full transcripts always stay on disk and behind resources.
+- **Partial success:** in a 10-video batch, one broken video is recorded (`failed_videos`) instead of sinking the other nine.
+- Jobs are **queued with hard timeouts**; limits are env-tunable (below).
 
 ## 📦 What comes out
-
-Each run writes a tidy, per-creator folder tree:
 
 ```text
 outputs/
@@ -117,8 +206,6 @@ outputs/
             ├── transcript.txt     ← the gold
             └── metadata.json      ← caption, timestamps, insights
 ```
-
-And with `--json`, stdout is a single machine-readable object:
 
 ```jsonc
 {
@@ -149,53 +236,15 @@ And with `--json`, stdout is a single machine-readable object:
 }
 ```
 
-On failure the command exits non-zero and (with `--json`) prints `{"status":"error","error":"..."}`, with details on stderr — easy to script around.
+## 🖥️ The Dashboard (for humans)
 
-## 🖥️ The Dashboard
-
-Prefer clicking to typing?
+Agents get MCP; you get a live dashboard:
 
 ```bash
 ./run_ui.sh
 ```
 
-The launcher builds the frontend, picks an open localhost port, and opens your browser. From the dashboard you can:
-
-- paste a profile/Reel URL **or upload audio** (`mp3`, `wav`, `m4a`, `aac`, `flac`, `ogg`, `webm`)
-- pick the Whisper model and an optional language hint
-- watch **live progress** through every pipeline stage
-- browse job history and open any transcript, insight set, or manifest
-
-## 🤖 Plug it into Claude (or any AI agent) — MCP
-
-This repo ships a hardened **Model Context Protocol server**, so an AI agent can run your competitor research for you: *"Transcribe @competitor's latest Reels and summarize their hook formulas."*
-
-```json
-{
-  "mcpServers": {
-    "ig-transcriber": {
-      "command": "/absolute/path/to/IG-Content-Transcriber/run_mcp_server.sh"
-    }
-  }
-}
-```
-
-Prefer HTTP? `./run_mcp_server.sh --transport streamable-http --host 127.0.0.1 --port 8001` → connect to `http://127.0.0.1:8001/mcp`.
-
-**Tools exposed:**
-
-| Tool | What it does |
-|---|---|
-| `transcribe_input` | Profile URL → latest 10 videos, or any single video URL |
-| `transcribe_local_audio` | Transcribe a local audio file + insights |
-| `list_recent_batches` | Browse saved runs |
-| `read_batch_manifest` | Load a full batch result |
-| `read_video_output` | Load one video's transcript + metadata |
-| `check_health` | Self-diagnose ffmpeg/Whisper/yt-dlp, disk, and job status |
-
-Plus resources: `ig-transcriber://server`, `ig-transcriber://recent-batches`, `ig-transcriber://manifest/{group}/{label}`, and `ig-transcriber://transcript/{group}/{label}/{video_id}`.
-
-**Built agent-tough:** tools never throw for expected failures — every call returns `status: "ok"` or a structured error (`error_type` + message + `hint`) an agent can recover from. Progress streams as MCP notifications, jobs are queued with hard timeouts, corrupt files degrade gracefully, and `include_transcript_text=false` / `max_transcript_chars` keep responses context-window-friendly (full text always stays on disk).
+Builds the frontend, picks an open localhost port, opens your browser. Paste a profile/Reel URL **or upload audio** (`mp3`, `wav`, `m4a`, `aac`, `flac`, `ogg`, `webm`), pick the Whisper model, watch live progress through every pipeline stage, and browse transcript + insight history.
 
 ## 🎛️ Tuning
 
@@ -213,7 +262,7 @@ All optional, via environment variables:
 | `IG_TRANSCRIBER_HTTP_TIMEOUT_SECONDS` | `30` | Instagram/Groq/yt-dlp socket timeout |
 | `IG_TRANSCRIBER_FETCH_RETRIES` | `3` | Instagram profile fetch attempts (with backoff) |
 
-**Model cheat sheet:** `tiny` = fastest, `base` = default sweet spot, `small`/`medium` = better accuracy, `large-v3` = best (needs RAM/time).
+**Whisper model cheat sheet:** `tiny` = fastest, `base` = default sweet spot, `small`/`medium` = better accuracy, `large-v3` = best (needs RAM/time).
 
 ## ✅ Tests
 
@@ -228,16 +277,15 @@ The MCP server and pipeline helpers ship with a lightweight suite (no Whisper/to
 
 - **Public profiles only** — private accounts are detected and refused.
 - Instagram may rate-limit anonymous requests; the tool retries with backoff, but if it's blocked, wait and rerun.
-- In a 10-video batch, one broken video won't sink the other nine — failures are recorded per video (`failed_videos` in the result).
 - Whisper models are cached after first load; already-transcribed videos are reused on reruns.
 - Everything runs locally. The only network calls are to Instagram/video hosts, and (optionally) GroqCloud with your key.
-- Agent workflows: see [`CLAUDE.md`](CLAUDE.md).
+- Agent-facing docs live in [`CLAUDE.md`](CLAUDE.md) — most MCP-aware coding agents pick it up automatically.
 
 ---
 
 <div align="center">
 
-**Found this useful for your content research? ⭐ Star the repo — it's free and it helps others find it.**
+**Wiring this into your agent? ⭐ Star the repo — it's free and it helps others find it.**
 
 *Built with Whisper, yt-dlp, FastAPI, React + shadcn/ui, and the Model Context Protocol.*
 
