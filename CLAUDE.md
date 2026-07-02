@@ -65,14 +65,14 @@ This starts the server over stdio. The MCP surface exposes:
 - `read_video_output`
 - `check_health`
 
-MCP tools never raise for expected failures: every tool returns `status: "ok"` or `status: "error"` with `error_type`, `error`, and usually a `hint`. Use `check_health` to diagnose setup problems (whisper/yt-dlp/ffmpeg availability, output directory writability, job activity). Use `include_transcript_text=false` or `max_transcript_chars` to keep tool responses small; full transcripts stay on disk and behind the transcript resources. In multi-video batches a failing video is recorded with `status: "error"` and counted in `failed_videos` instead of aborting the batch. Server limits (job timeout, concurrency, upload size) are tunable via `IG_TRANSCRIBER_*` environment variables documented in the README.
+MCP tools never raise for expected failures: every tool returns `status: "ok"` or `status: "error"` with `error_type`, `error`, and usually a `hint`. Use `check_health` to diagnose setup problems (whisper/yt-dlp/ffmpeg availability, output directory writability, job activity). Use `include_transcript_text=false` or `max_transcript_chars` to keep tool responses small; full transcripts stay on disk and behind the transcript resources. In multi-video batches a failing video is recorded with `status: "error"` and counted in `failed_videos` instead of aborting the batch. Server limits (job timeout, concurrency, upload size) are tunable via `REELRECON_*` environment variables (legacy `IG_TRANSCRIBER_*` names still work) documented in the README.
 
 Resources:
 
-- `ig-transcriber://server`
-- `ig-transcriber://recent-batches`
-- `ig-transcriber://manifest/{source_group}/{source_label}`
-- `ig-transcriber://transcript/{source_group}/{source_label}/{video_id}`
+- `reelrecon://server`
+- `reelrecon://recent-batches`
+- `reelrecon://manifest/{source_group}/{source_label}`
+- `reelrecon://transcript/{source_group}/{source_label}/{video_id}`
 
 If an MCP client needs HTTP instead of stdio:
 

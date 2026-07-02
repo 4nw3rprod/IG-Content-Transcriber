@@ -96,7 +96,7 @@ def test_validate_model():
 
 
 def test_validate_model_extra_env(monkeypatch):
-    monkeypatch.setenv("IG_TRANSCRIBER_EXTRA_MODELS", "custom-model, another")
+    monkeypatch.setenv("REELRECON_EXTRA_MODELS", "custom-model, another")
     model, err = mcp_server._validate_model("custom-model")
     assert err is None and model == "custom-model"
 
@@ -177,7 +177,7 @@ async def test_list_tools_and_server_resource(server):
 
         from pydantic import AnyUrl
 
-        resource = await client.read_resource(AnyUrl("ig-transcriber://server"))
+        resource = await client.read_resource(AnyUrl("reelrecon://server"))
         payload = json.loads(resource.contents[0].text)
         assert payload["name"] == mcp_server.SERVER_NAME
         assert "error_contract" in payload
@@ -317,7 +317,7 @@ async def test_recent_batches_resource_tolerates_corruption(server, clean_output
     from pydantic import AnyUrl
 
     async with create_connected_server_and_client_session(server._mcp_server) as client:
-        resource = await client.read_resource(AnyUrl("ig-transcriber://recent-batches"))
+        resource = await client.read_resource(AnyUrl("reelrecon://recent-batches"))
         payload = json.loads(resource.contents[0].text)
         assert payload["batches"][0]["status"] == "unreadable"
 

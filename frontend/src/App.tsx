@@ -346,8 +346,8 @@ function App() {
             <Clapperboard className="size-4" />
           </div>
           <div>
-            <p className="text-sm font-bold tracking-tight text-white">Instagram AI Pipeline</p>
-            <p className="font-mono text-[10px] text-muted-foreground">Frontend synced from Stitch</p>
+            <p className="text-sm font-bold tracking-tight text-white">ReelRecon</p>
+            <p className="font-mono text-[10px] text-muted-foreground">Instagram content recon engine</p>
           </div>
         </div>
         <div className="flex items-center gap-2">

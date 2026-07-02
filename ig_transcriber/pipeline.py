@@ -24,15 +24,18 @@ warnings.filterwarnings("ignore", message="Support for Python version 3.9 has be
 
 
 def _env_int(name: str, default: int, *, minimum: int = 0) -> int:
+    # REELRECON_* is the primary prefix; the legacy IG_TRANSCRIBER_* prefix
+    # remains supported so existing setups keep working after the rename.
+    raw = os.environ.get(f"REELRECON_{name}", os.environ.get(f"IG_TRANSCRIBER_{name}", default))
     try:
-        return max(int(os.environ.get(name, default)), minimum)
+        return max(int(raw), minimum)
     except (TypeError, ValueError):
         return default
 
 
 INSTAGRAM_APP_ID = "936619743392459"
-DEFAULT_TIMEOUT_SECONDS = _env_int("IG_TRANSCRIBER_HTTP_TIMEOUT_SECONDS", 30, minimum=1)
-FETCH_RETRY_ATTEMPTS = _env_int("IG_TRANSCRIBER_FETCH_RETRIES", 3, minimum=1)
+DEFAULT_TIMEOUT_SECONDS = _env_int("HTTP_TIMEOUT_SECONDS", 30, minimum=1)
+FETCH_RETRY_ATTEMPTS = _env_int("FETCH_RETRIES", 3, minimum=1)
 INSTAGRAM_VIDEO_LIMIT = 10
 GROQ_BASE_URL = "https://api.groq.com/openai/v1/chat/completions"
 DEFAULT_GROQ_MODEL = "openai/gpt-oss-20b"

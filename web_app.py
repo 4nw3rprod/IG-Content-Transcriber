@@ -58,7 +58,7 @@ class JobManager:
     def __init__(self) -> None:
         self._jobs: dict[str, JobRecord] = {}
         self._lock = threading.Lock()
-        self._executor = ThreadPoolExecutor(max_workers=2, thread_name_prefix="ig-transcriber")
+        self._executor = ThreadPoolExecutor(max_workers=2, thread_name_prefix="reelrecon")
 
     def list_jobs(self) -> list[JobRecord]:
         with self._lock:
@@ -215,7 +215,7 @@ class JobManager:
         return f"/outputs/{relative.as_posix()}"
 
 
-app = FastAPI(title="IG Content Transcriber")
+app = FastAPI(title="ReelRecon")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

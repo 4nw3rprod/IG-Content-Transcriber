@@ -1,8 +1,10 @@
 <div align="center">
 
-# 📸 IG Content Transcriber
+# 🎬 ReelRecon
 
-### The Instagram transcription engine built for AI agents.
+### Reel reconnaissance for AI agents.
+
+**Transcribe and decode any public Instagram profile — hooks, CTAs, and script patterns — locally and for free.**
 
 **Give Claude, ChatGPT, Gemini, Hermes, OpenClaw — or any MCP-capable agent — the power to watch Instagram for you.**
 
@@ -18,7 +20,7 @@
 
 [🤖 Agent Setup](#-drop-it-into-your-agent-stack) · [🚀 Quick Start](#-quick-start) · [🔍 Use Cases](#-what-your-agent-can-do-with-it) · [🧰 Tool Reference](#-mcp-tool-reference) · [🖥️ Web UI](#️-the-dashboard-for-humans)
 
-<img src="screen.png" alt="IG Content Transcriber dashboard" width="850"/>
+<img src="screen.png" alt="ReelRecon dashboard" width="850"/>
 
 </div>
 
@@ -26,7 +28,7 @@
 
 ## 🎯 Why this exists
 
-LLMs can't watch video. Agentic frameworks can browse, code, and write — but a Reel is a black box to them. **IG Content Transcriber** closes that gap with a local, free, MCP-native pipeline:
+LLMs can't watch video. Agentic frameworks can browse, code, and write — but a Reel is a black box to them. **ReelRecon** closes that gap with a local, free, MCP-native pipeline:
 
 1. Your agent calls one tool with a **public Instagram profile URL**.
 2. The server grabs the **latest 10 videos**, extracts audio, and transcribes every word with **OpenAI Whisper** — locally, no per-minute API fees.
@@ -52,7 +54,7 @@ The server speaks **stdio and streamable-HTTP MCP**, so anything MCP-capable can
 <summary><b>Claude Code</b></summary>
 
 ```bash
-claude mcp add ig-transcriber -- /absolute/path/to/IG-Content-Transcriber/run_mcp_server.sh
+claude mcp add reelrecon -- /absolute/path/to/ReelRecon/run_mcp_server.sh
 ```
 </details>
 
@@ -62,8 +64,8 @@ claude mcp add ig-transcriber -- /absolute/path/to/IG-Content-Transcriber/run_mc
 ```json
 {
   "mcpServers": {
-    "ig-transcriber": {
-      "command": "/absolute/path/to/IG-Content-Transcriber/run_mcp_server.sh"
+    "reelrecon": {
+      "command": "/absolute/path/to/ReelRecon/run_mcp_server.sh"
     }
   }
 }
@@ -74,8 +76,8 @@ claude mcp add ig-transcriber -- /absolute/path/to/IG-Content-Transcriber/run_mc
 <summary><b>ChatGPT — Codex CLI</b> (<code>~/.codex/config.toml</code>)</summary>
 
 ```toml
-[mcp_servers.ig-transcriber]
-command = "/absolute/path/to/IG-Content-Transcriber/run_mcp_server.sh"
+[mcp_servers.reelrecon]
+command = "/absolute/path/to/ReelRecon/run_mcp_server.sh"
 ```
 </details>
 
@@ -85,8 +87,8 @@ command = "/absolute/path/to/IG-Content-Transcriber/run_mcp_server.sh"
 ```json
 {
   "mcpServers": {
-    "ig-transcriber": {
-      "command": "/absolute/path/to/IG-Content-Transcriber/run_mcp_server.sh"
+    "reelrecon": {
+      "command": "/absolute/path/to/ReelRecon/run_mcp_server.sh"
     }
   }
 }
@@ -115,7 +117,7 @@ stdout is a single JSON object on success; non-zero exit + `{"status":"error","e
 
 **Then just prompt your agent:**
 
-> *"Use ig-transcriber to transcribe the latest Reels from @competitor. Compare their hooks against my last 5 scripts and tell me what patterns I'm missing."*
+> *"Use reelrecon to transcribe the latest Reels from @competitor. Compare their hooks against my last 5 scripts and tell me what patterns I'm missing."*
 
 ## 🔍 What your agent can do with it
 
@@ -151,8 +153,8 @@ flowchart LR
 **Requirements:** Python 3.11+, `ffmpeg` on your PATH, network access.
 
 ```bash
-git clone https://github.com/4nw3rprod/IG-Content-Transcriber.git
-cd IG-Content-Transcriber
+git clone https://github.com/4nw3rprod/ReelRecon.git
+cd ReelRecon
 python3.11 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 ```
@@ -184,7 +186,7 @@ Connect your agent ([see configs above](#-drop-it-into-your-agent-stack)), or ru
 | `read_video_output` | Load one video's transcript + metadata |
 | `check_health` | Self-diagnose ffmpeg/Whisper/yt-dlp, disk, and job status |
 
-Resources: `ig-transcriber://server` · `ig-transcriber://recent-batches` · `ig-transcriber://manifest/{group}/{label}` · `ig-transcriber://transcript/{group}/{label}/{video_id}`
+Resources: `reelrecon://server` · `reelrecon://recent-batches` · `reelrecon://manifest/{group}/{label}` · `reelrecon://transcript/{group}/{label}/{video_id}`
 
 **The contract your agent can rely on:**
 
@@ -253,14 +255,16 @@ All optional, via environment variables:
 | Variable | Default | Purpose |
 |---|---|---|
 | `GROQ_API_KEY` | — | Enables GroqCloud AI insights (heuristic fallback otherwise) |
-| `IG_TRANSCRIBER_OUTPUT_DIR` | `<repo>/outputs` | Where results are written |
-| `IG_TRANSCRIBER_JOB_TIMEOUT_SECONDS` | `3600` | Hard per-job timeout (MCP) |
-| `IG_TRANSCRIBER_QUEUE_TIMEOUT_SECONDS` | `900` | Max wait for a job slot (MCP) |
-| `IG_TRANSCRIBER_MAX_CONCURRENT_JOBS` | `1` | Parallel transcription jobs (MCP) |
-| `IG_TRANSCRIBER_MAX_UPLOAD_BYTES` | 2 GiB | Max local audio file size (MCP) |
-| `IG_TRANSCRIBER_EXTRA_MODELS` | — | Comma-separated extra Whisper model names to allow |
-| `IG_TRANSCRIBER_HTTP_TIMEOUT_SECONDS` | `30` | Instagram/Groq/yt-dlp socket timeout |
-| `IG_TRANSCRIBER_FETCH_RETRIES` | `3` | Instagram profile fetch attempts (with backoff) |
+| `REELRECON_OUTPUT_DIR` | `<repo>/outputs` | Where results are written |
+| `REELRECON_JOB_TIMEOUT_SECONDS` | `3600` | Hard per-job timeout (MCP) |
+| `REELRECON_QUEUE_TIMEOUT_SECONDS` | `900` | Max wait for a job slot (MCP) |
+| `REELRECON_MAX_CONCURRENT_JOBS` | `1` | Parallel transcription jobs (MCP) |
+| `REELRECON_MAX_UPLOAD_BYTES` | 2 GiB | Max local audio file size (MCP) |
+| `REELRECON_EXTRA_MODELS` | — | Comma-separated extra Whisper model names to allow |
+| `REELRECON_HTTP_TIMEOUT_SECONDS` | `30` | Instagram/Groq/yt-dlp socket timeout |
+| `REELRECON_FETCH_RETRIES` | `3` | Instagram profile fetch attempts (with backoff) |
+
+> Legacy `IG_TRANSCRIBER_*` variable names are still honored, so existing setups keep working.
 
 **Whisper model cheat sheet:** `tiny` = fastest, `base` = default sweet spot, `small`/`medium` = better accuracy, `large-v3` = best (needs RAM/time).
 
