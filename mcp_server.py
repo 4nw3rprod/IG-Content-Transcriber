@@ -17,29 +17,39 @@ from typing import Any, Callable
 from mcp.server.fastmcp import Context, FastMCP
 from mcp.types import ToolAnnotations
 
-SERVER_NAME = "IG Content Transcriber"
-SERVER_VERSION = "1.1.0"
+SERVER_NAME = "ReelRecon"
+SERVER_VERSION = "1.2.0"
 
-logger = logging.getLogger("ig_transcriber.mcp")
+logger = logging.getLogger("reelrecon.mcp")
+
+
+def _env(name: str, default: str | None = None) -> str | None:
+    # REELRECON_* is the primary prefix; the legacy IG_TRANSCRIBER_* prefix
+    # remains supported so existing setups keep working after the rename.
+    for key in (f"REELRECON_{name}", f"IG_TRANSCRIBER_{name}"):
+        value = os.environ.get(key)
+        if value is not None:
+            return value
+    return default
 
 
 def _env_int(name: str, default: int, *, minimum: int = 0) -> int:
     try:
-        return max(int(os.environ.get(name, default)), minimum)
+        return max(int(_env(name, str(default))), minimum)
     except (TypeError, ValueError):
         return default
 
 
 REPO_ROOT = Path(__file__).resolve().parent
-DEFAULT_OUTPUT_DIR = Path(os.environ.get("IG_TRANSCRIBER_OUTPUT_DIR", REPO_ROOT / "outputs")).expanduser().resolve()
+DEFAULT_OUTPUT_DIR = Path(_env("OUTPUT_DIR", str(REPO_ROOT / "outputs"))).expanduser().resolve()
 MAX_LIST_LIMIT = 50
-JOB_TIMEOUT_SECONDS = _env_int("IG_TRANSCRIBER_JOB_TIMEOUT_SECONDS", 3600, minimum=30)
-QUEUE_TIMEOUT_SECONDS = _env_int("IG_TRANSCRIBER_QUEUE_TIMEOUT_SECONDS", 900, minimum=5)
-MAX_CONCURRENT_JOBS = _env_int("IG_TRANSCRIBER_MAX_CONCURRENT_JOBS", 1, minimum=1)
-MAX_UPLOAD_BYTES = _env_int("IG_TRANSCRIBER_MAX_UPLOAD_BYTES", 2 * 1024 * 1024 * 1024, minimum=1)
+JOB_TIMEOUT_SECONDS = _env_int("JOB_TIMEOUT_SECONDS", 3600, minimum=30)
+QUEUE_TIMEOUT_SECONDS = _env_int("QUEUE_TIMEOUT_SECONDS", 900, minimum=5)
+MAX_CONCURRENT_JOBS = _env_int("MAX_CONCURRENT_JOBS", 1, minimum=1)
+MAX_UPLOAD_BYTES = _env_int("MAX_UPLOAD_BYTES", 2 * 1024 * 1024 * 1024, minimum=1)
 
 # Whisper model names accepted without touching the (heavy) whisper import.
-# Extra names can be allowed with IG_TRANSCRIBER_EXTRA_MODELS="name1,name2".
+# Extra names can be allowed with REELRECON_EXTRA_MODELS="name1,name2".
 KNOWN_WHISPER_MODELS = {
     "tiny",
     "tiny.en",
@@ -139,12 +149,12 @@ def _video_dir(source_group: str, source_label: str, video_id: str) -> Path:
 
 
 def _manifest_resource_uri(source_group: str, source_label: str) -> str:
-    return f"ig-transcriber://manifest/{_safe_slug(source_group, 'group')}/{_safe_slug(source_label, 'source')}"
+    return f"reelrecon://manifest/{_safe_slug(source_group, 'group')}/{_safe_slug(source_label, 'source')}"
 
 
 def _transcript_resource_uri(source_group: str, source_label: str, video_id: str) -> str:
     return (
-        "ig-transcriber://transcript/"
+        "reelrecon://transcript/"
         f"{_safe_slug(source_group, 'group')}/{_safe_slug(source_label, 'source')}/{_safe_slug(video_id, 'video')}"
     )
 
@@ -289,7 +299,7 @@ def _validate_url(raw_url: str) -> tuple[str | None, dict[str, Any] | None]:
 def _allowed_models() -> set[str]:
     extra = {
         name.strip()
-        for name in os.environ.get("IG_TRANSCRIBER_EXTRA_MODELS", "").split(",")
+        for name in (_env("EXTRA_MODELS") or "").split(",")
         if name.strip()
     }
     return KNOWN_WHISPER_MODELS | extra
@@ -305,7 +315,7 @@ def _validate_model(model_name: str) -> tuple[str | None, dict[str, Any] | None]
             "invalid_input",
             f"Unknown Whisper model: {name!r}",
             hint=f"Valid models: {', '.join(sorted(allowed))}. "
-            "Set IG_TRANSCRIBER_EXTRA_MODELS to allow additional names.",
+            "Set REELRECON_EXTRA_MODELS to allow additional names.",
         )
     return name, None
 
@@ -426,7 +436,7 @@ def _preflight_transcription() -> dict[str, Any] | None:
         return _error(
             "output_dir_error",
             f"The output directory is not usable: {exc}",
-            hint="Set IG_TRANSCRIBER_OUTPUT_DIR to a writable directory.",
+            hint="Set REELRECON_OUTPUT_DIR to a writable directory.",
         )
     return None
 
@@ -450,7 +460,7 @@ async def _run_pipeline_job(
             "server_busy",
             f"The server is already running {MAX_CONCURRENT_JOBS} transcription job(s) and the queue wait "
             f"exceeded {QUEUE_TIMEOUT_SECONDS}s.",
-            hint="Retry later, or raise IG_TRANSCRIBER_MAX_CONCURRENT_JOBS / IG_TRANSCRIBER_QUEUE_TIMEOUT_SECONDS.",
+            hint="Retry later, or raise REELRECON_MAX_CONCURRENT_JOBS / REELRECON_QUEUE_TIMEOUT_SECONDS.",
         )
 
     _active_jobs += 1
@@ -466,7 +476,7 @@ async def _run_pipeline_job(
         return _error(
             "timeout",
             message,
-            hint="Raise IG_TRANSCRIBER_JOB_TIMEOUT_SECONDS for long batches, or use a smaller Whisper model.",
+            hint="Raise REELRECON_JOB_TIMEOUT_SECONDS for long batches, or use a smaller Whisper model.",
         )
     except pipeline.PipelineError as exc:
         await _notify(ctx, "error", str(exc))
@@ -518,7 +528,7 @@ def build_server(*, host: str, port: int, debug: bool) -> FastMCP:
 
     read_only = ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True, openWorldHint=False)
 
-    @mcp.resource("ig-transcriber://server")
+    @mcp.resource("reelrecon://server")
     def server_resource() -> str:
         return _json(
             {
@@ -550,15 +560,15 @@ def build_server(*, host: str, port: int, debug: bool) -> FastMCP:
                     "max_list_limit": MAX_LIST_LIMIT,
                 },
                 "resources": [
-                    "ig-transcriber://server",
-                    "ig-transcriber://recent-batches",
-                    "ig-transcriber://manifest/{source_group}/{source_label}",
-                    "ig-transcriber://transcript/{source_group}/{source_label}/{video_id}",
+                    "reelrecon://server",
+                    "reelrecon://recent-batches",
+                    "reelrecon://manifest/{source_group}/{source_label}",
+                    "reelrecon://transcript/{source_group}/{source_label}/{video_id}",
                 ],
             }
         )
 
-    @mcp.resource("ig-transcriber://recent-batches")
+    @mcp.resource("reelrecon://recent-batches")
     def recent_batches_resource() -> str:
         return _json(
             {
@@ -567,7 +577,7 @@ def build_server(*, host: str, port: int, debug: bool) -> FastMCP:
             }
         )
 
-    @mcp.resource("ig-transcriber://manifest/{source_group}/{source_label}")
+    @mcp.resource("reelrecon://manifest/{source_group}/{source_label}")
     def manifest_resource(source_group: str, source_label: str) -> str:
         try:
             path = _manifest_path(source_group, source_label)
@@ -581,7 +591,7 @@ def build_server(*, host: str, port: int, debug: bool) -> FastMCP:
             raise ValueError(f"Manifest for {source_group}/{source_label} is corrupt: {exc}") from exc
         return _json(payload)
 
-    @mcp.resource("ig-transcriber://transcript/{source_group}/{source_label}/{video_id}")
+    @mcp.resource("reelrecon://transcript/{source_group}/{source_label}/{video_id}")
     def transcript_resource(source_group: str, source_label: str, video_id: str) -> str:
         try:
             transcript_path = _video_dir(source_group, source_label, video_id) / "transcript.txt"
@@ -700,7 +710,7 @@ def build_server(*, host: str, port: int, debug: bool) -> FastMCP:
             return _error(
                 "invalid_input",
                 f"Audio file is {size} bytes, above the {MAX_UPLOAD_BYTES} byte limit.",
-                hint="Raise IG_TRANSCRIBER_MAX_UPLOAD_BYTES to allow larger files.",
+                hint="Raise REELRECON_MAX_UPLOAD_BYTES to allow larger files.",
             )
 
         model, model_error = _validate_model(model_name)
