@@ -40,21 +40,39 @@ Built agent-tough: structured errors instead of exceptions, progress notificatio
 
 The server speaks **stdio and streamable-HTTP MCP**, so anything MCP-capable can use it. No MCP? There's a JSON-mode CLI any framework can shell out to.
 
+### ⚡ One command, no clone: `npx`
+
+With Node 18+, Python 3.10+ (3.11 recommended), and `ffmpeg` installed:
+
+```bash
+npx -y reelrecon
+```
+
+That starts the MCP server on stdio. The first run provisions a private Python environment in `~/.reelrecon` (Whisper + friends — a few minutes and a few GB, once); every start after that is instant. One-off CLI runs work too:
+
+```bash
+npx -y reelrecon transcribe "https://www.instagram.com/<username>/" --json
+```
+
+> Already have Python + deps? Set `REELRECON_PYTHON=/path/to/python` to skip provisioning and use your own environment.
+>
+> Package not on npm yet in your region/registry? Run it straight from GitHub — same launcher: `npx -y github:4nw3rprod/IG-Content-Transcriber`
+
 | Agent / Framework | Integration |
 |---|---|
-| **Claude Code** (CLI) | `claude mcp add` — one command, see below |
+| **Claude Code** (CLI) | `claude mcp add reelrecon -- npx -y reelrecon` |
 | **Claude Desktop** | `mcpServers` entry in config |
 | **ChatGPT / Codex CLI** | `mcp_servers` entry in `~/.codex/config.toml` |
 | **Gemini CLI** | `mcpServers` entry in `~/.gemini/settings.json` |
 | **Cursor / Windsurf / Cline** | Standard MCP server config (stdio) |
-| **OpenClaw, Hermes & other open agent frameworks** | Point the framework's MCP client at `run_mcp_server.sh` (stdio) or the HTTP endpoint |
+| **OpenClaw, Hermes & other open agent frameworks** | Point the framework's MCP client at `npx -y reelrecon` (stdio) or the HTTP endpoint |
 | **LangChain / CrewAI / custom loops** | Use an MCP adapter, or shell out to the CLI with `--json` |
 
 <details>
 <summary><b>Claude Code</b></summary>
 
 ```bash
-claude mcp add reelrecon -- /absolute/path/to/ReelRecon/run_mcp_server.sh
+claude mcp add reelrecon -- npx -y reelrecon
 ```
 </details>
 
@@ -65,7 +83,8 @@ claude mcp add reelrecon -- /absolute/path/to/ReelRecon/run_mcp_server.sh
 {
   "mcpServers": {
     "reelrecon": {
-      "command": "/absolute/path/to/ReelRecon/run_mcp_server.sh"
+      "command": "npx",
+      "args": ["-y", "reelrecon"]
     }
   }
 }
@@ -77,12 +96,30 @@ claude mcp add reelrecon -- /absolute/path/to/ReelRecon/run_mcp_server.sh
 
 ```toml
 [mcp_servers.reelrecon]
-command = "/absolute/path/to/ReelRecon/run_mcp_server.sh"
+command = "npx"
+args = ["-y", "reelrecon"]
 ```
 </details>
 
 <details>
 <summary><b>Gemini CLI</b> (<code>~/.gemini/settings.json</code>)</summary>
+
+```json
+{
+  "mcpServers": {
+    "reelrecon": {
+      "command": "npx",
+      "args": ["-y", "reelrecon"]
+    }
+  }
+}
+```
+</details>
+
+<details>
+<summary><b>Running from a local clone instead of npx</b></summary>
+
+Clone the repo, install the Python deps ([Quick Start](#-quick-start)), then point your MCP client at the launcher script:
 
 ```json
 {
@@ -150,7 +187,9 @@ flowchart LR
 
 ## 🚀 Quick Start
 
-**Requirements:** Python 3.11+, `ffmpeg` on your PATH, network access.
+**Fastest path (no clone):** `npx -y reelrecon` — see [agent setup](#-drop-it-into-your-agent-stack) above.
+
+**Manual setup — requirements:** Python 3.11+, `ffmpeg` on your PATH, network access.
 
 ```bash
 git clone https://github.com/4nw3rprod/ReelRecon.git

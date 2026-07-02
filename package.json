@@ -1,0 +1,41 @@
+{
+  "name": "reelrecon",
+  "version": "1.2.0",
+  "description": "Reel reconnaissance for AI agents — transcribe and decode public Instagram profiles via MCP. Whisper-powered, free, runs locally.",
+  "bin": {
+    "reelrecon": "bin/reelrecon.js"
+  },
+  "files": [
+    "bin/",
+    "mcp_server.py",
+    "transcribe_latest_reel.py",
+    "ig_transcriber/*.py",
+    "requirements.txt",
+    "README.md",
+    "CLAUDE.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/4nw3rprod/IG-Content-Transcriber.git"
+  },
+  "homepage": "https://github.com/4nw3rprod/IG-Content-Transcriber#readme",
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "instagram",
+    "reels",
+    "transcription",
+    "whisper",
+    "ai-agents",
+    "content-research",
+    "competitor-analysis",
+    "claude",
+    "yt-dlp"
+  ],
+  "author": "4nw3rprod",
+  "license": "MIT"
+}

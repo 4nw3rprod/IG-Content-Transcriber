@@ -56,6 +56,12 @@ Preferred command for MCP clients:
 ./run_mcp_server.sh
 ```
 
+Or, without a local clone (Node 18+, Python 3.10+, ffmpeg required; first run provisions a Python env in `~/.reelrecon`):
+
+```bash
+npx -y reelrecon
+```
+
 This starts the server over stdio. The MCP surface exposes:
 
 - `transcribe_input`

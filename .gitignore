@@ -4,3 +4,6 @@ outputs/
 .env.local
 frontend/node_modules/
 frontend/dist/
+
+*.tgz
+node_modules/
