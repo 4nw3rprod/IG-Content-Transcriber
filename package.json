@@ -20,9 +20,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/4nw3rprod/IG-Content-Transcriber.git"
+    "url": "git+https://github.com/4nw3rprod/ReelRecon.git"
   },
-  "homepage": "https://github.com/4nw3rprod/IG-Content-Transcriber#readme",
+  "homepage": "https://github.com/4nw3rprod/ReelRecon#readme",
   "keywords": [
     "mcp",
     "mcp-server",
